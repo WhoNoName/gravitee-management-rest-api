@@ -115,6 +115,25 @@ public class ApiPageResource extends AbstractResource {
         return pageService.update(page, updatePageEntity);
     }
 
+    @PUT
+    @Path("/_fetch")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Refresh page by calling the associated fetcher",
+            notes = "User must have the MANAGE_PAGES permission to use this service")
+    @ApiResponses({
+            @ApiResponse(code = 201, message = "Page successfully refreshed", response = PageEntity.class),
+            @ApiResponse(code = 500, message = "Internal server error")})
+    @Permissions({
+            @Permission(value = RolePermission.API_DOCUMENTATION, acls = RolePermissionAction.UPDATE)
+    })
+    public PageEntity fetchPage(
+            @PathParam("api") String api,
+            @PathParam("page") String page) {
+        pageService.findById(page);
+
+        return pageService.fetch(page);
+    }
+
     @DELETE
     @ApiOperation(value = "Delete a page",
             notes = "User must have the MANAGE_PAGES permission to use this service")
